@@ -1,3 +1,5 @@
+import { DragItem } from "../../src/dragItem";
+
 export type Action =
   | {
       type: "ADD_LIST";
@@ -6,6 +8,17 @@ export type Action =
   | {
       type: "ADD_TASK";
       payload: { text: string; listId: string };
+    }
+  | {
+      type: "MOVE_LIST";
+      payload: {
+        draggedId: string;
+        hoverId: string;
+      };
+    }
+  | {
+      type: "SET_DRAGGED_ITEM";
+      payload: DragItem | null;
     };
 
 export const addTask = (text: string, listId: string): Action => ({
@@ -18,4 +31,17 @@ export const addTask = (text: string, listId: string): Action => ({
 export const addList = (text: string): Action => ({
   type: "ADD_LIST",
   payload: text,
+});
+
+export const moveList = (draggedId: string, hoverId: string): Action => ({
+  type: "MOVE_LIST",
+  payload: {
+    draggedId, //this is Id where we start dragging the column we remember this ID
+    hoverId, // this is id where we start hover other columns we takes their ID
+  },
+});
+
+export const setDraggedItem = (draggedItem: DragItem | null): Action => ({
+  type: "SET_DRAGGED_ITEM",
+  payload: draggedItem,
 });
