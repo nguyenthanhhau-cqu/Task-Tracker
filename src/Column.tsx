@@ -6,6 +6,7 @@ import { useRef } from "react";
 import { useItemDrag } from "./utils/useItemDrag";
 import { moveList, addTask } from "./state/action";
 import { useDrop } from "react-dnd";
+import { isHidden } from "./utils/isHidden";
 
 type ColumnProps = {
   text: string;
@@ -24,10 +25,10 @@ export const Column = ({ text, id }: ColumnProps) => {
         return;
       }
       if (draggedItem.type === "COLUMN") {
+        // checking to make sure the the dragged item doest match its item
         if (draggedItem.id === id) {
           return;
         }
-        console.log(draggedItem.id + id);
         dispatch(moveList(draggedItem.id, id));
       }
     },
@@ -37,7 +38,7 @@ export const Column = ({ text, id }: ColumnProps) => {
   drag(drop(ref));
 
   return (
-    <ColumnContainer ref={ref}>
+    <ColumnContainer ref={ref} isHidden={isHidden(draggedItem, "COLUMN", id)}>
       <ColumnTitle>{text}</ColumnTitle>
       {tasks.map((task) => (
         <Card id={task.id} key={task.id} text={task.text}></Card>
