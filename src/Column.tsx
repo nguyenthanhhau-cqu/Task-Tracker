@@ -46,7 +46,7 @@ export const Column = ({ text, id, isPreview }: ColumnProps) => {
     >
       <ColumnTitle>{text}</ColumnTitle>
       {tasks.map((task) => (
-        <Card id={task.id} key={task.id} text={task.text}></Card>
+        <Card columnId={id} id={task.id} key={task.id} text={task.text}></Card>
       ))}
       <AddNewItem
         toggleButtonText="+ Add another task"
