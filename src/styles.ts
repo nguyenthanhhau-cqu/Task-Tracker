@@ -1,13 +1,42 @@
 import styled from "styled-components";
-
 type AddItemButtonProps = {
   dark?: boolean;
 };
 interface DragPreviewContainerProps {
   isHidden?: boolean;
+  isPreview?: boolean;
 }
+
+type DragPreviewWrapperProps = {
+  position: {
+    x: number;
+    y: number;
+  };
+};
+
 export const DragPreviewContainer = styled.div<DragPreviewContainerProps>`
-  opacity: ${(props) => (props.isHidden ? 0.3 : 1)};
+  transform: ${(props) => (props.isPreview ? "rotate(5deg)" : undefined)};
+  opacity: ${(props) => (props.isHidden ? 0 : 1)};
+`;
+
+export const DragPreviewWrapper = styled.div.attrs<DragPreviewWrapperProps>( //by default the style will generate CSS class everytime the posittion
+  //move based on coordinator x,y to avoid that we use attrs method to assign css to exact our component
+  ({ position: { x, y } }) => ({
+    style: {
+      transform: `translate(${x}px, ${y}px)`,
+    },
+  })
+)<DragPreviewWrapperProps>``; //define the props of resulting component
+
+//Pointer-event helps us to ignore the mouse event
+export const CustomDragLayerContainer = styled.div`
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
 `;
 
 export const AddItemButton = styled.button<AddItemButtonProps>`
