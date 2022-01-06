@@ -15,10 +15,9 @@ type ColumnProps = {
 };
 
 export const Column = ({ text, id, isPreview }: ColumnProps) => {
-  const { getTasksByListId, dispatch, draggedItem } = useAppState();
+  const { draggedItem, getTasksByListId, dispatch } = useAppState();
   const tasks = getTasksByListId(id);
   const ref = useRef<HTMLDivElement>(null);
-  const { drag } = useItemDrag({ type: "COLUMN", id, text });
   const [, drop] = useDrop({
     accept: ["COLUMN", "CARD"],
     hover() {
@@ -26,10 +25,10 @@ export const Column = ({ text, id, isPreview }: ColumnProps) => {
         return;
       }
       if (draggedItem.type === "COLUMN") {
-        // checking to make sure the the dragged item doest match its item
         if (draggedItem.id === id) {
           return;
         }
+        console.log(draggedItem);
         dispatch(moveList(draggedItem.id, id));
       } else {
         if (draggedItem.columnId === id) {
@@ -38,25 +37,29 @@ export const Column = ({ text, id, isPreview }: ColumnProps) => {
         if (tasks.length) {
           return;
         }
+
         dispatch(moveTask(draggedItem.id, null, draggedItem.columnId, id));
         dispatch(setDraggedItem({ ...draggedItem, columnId: id }));
       }
     },
   });
 
+  const { drag } = useItemDrag({ type: "COLUMN", id, text });
+
   drag(drop(ref));
+
   return (
     <ColumnContainer
+      isPreview={isPreview}
       ref={ref}
       isHidden={isHidden(draggedItem, "COLUMN", id, isPreview)}
-      isPreview={isPreview}
     >
       <ColumnTitle>{text}</ColumnTitle>
       {tasks.map((task) => (
         <Card id={task.id} columnId={id} text={task.text} key={task.id} />
       ))}
       <AddNewItem
-        toggleButtonText="+ Add another task"
+        toggleButtonText="+ Add another card"
         onAdd={(text) => dispatch(addTask(text, id))}
         dark
       />

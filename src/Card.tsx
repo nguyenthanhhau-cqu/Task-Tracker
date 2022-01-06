@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useDrop } from "react-dnd";
-import { moveTask } from "./state/action";
+import { moveTask, setDraggedItem } from "./state/action";
 import { useAppState } from "./state/AppStateContext";
 import { CardContainer } from "./styles";
 import { isHidden } from "./utils/isHidden";
@@ -35,7 +35,7 @@ export const Card = ({ text, id, columnId, isPreview }: CardProps) => {
       }
 
       dispatch(moveTask(draggedItem.id, id, draggedItem.columnId, columnId));
-      console.log(draggedItem);
+      dispatch(setDraggedItem({ ...draggedItem, columnId })); //update the columId
     },
   });
 
