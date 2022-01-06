@@ -1,12 +1,12 @@
-import { ColumnContainer, ColumnTitle } from "./styles";
-import { AddNewItem } from "./AddNewItem";
-import { useAppState } from "./state/AppStateContext";
-import { Card } from "./Card";
 import { useRef } from "react";
-import { useItemDrag } from "./utils/useItemDrag";
-import { moveList, addTask } from "./state/action";
 import { useDrop } from "react-dnd";
+import { AddNewItem } from "./AddNewItem";
+import { Card } from "./Card";
+import { addTask, moveList, moveTask, setDraggedItem } from "./state/action";
+import { useAppState } from "./state/AppStateContext";
+import { ColumnContainer, ColumnTitle } from "./styles";
 import { isHidden } from "./utils/isHidden";
+import { useItemDrag } from "./utils/useItemDrag";
 
 type ColumnProps = {
   text: string;
@@ -20,7 +20,7 @@ export const Column = ({ text, id, isPreview }: ColumnProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const { drag } = useItemDrag({ type: "COLUMN", id, text });
   const [, drop] = useDrop({
-    accept: "COLUMN",
+    accept: ["COLUMN", "CARD"],
     hover() {
       if (!draggedItem) {
         return;
@@ -31,13 +31,20 @@ export const Column = ({ text, id, isPreview }: ColumnProps) => {
           return;
         }
         dispatch(moveList(draggedItem.id, id));
+      } else {
+        if (draggedItem.columnId === id) {
+          return;
+        }
+        if (tasks.length) {
+          return;
+        }
+        dispatch(moveTask(draggedItem.id, null, draggedItem.columnId, id));
+        dispatch(setDraggedItem({ ...draggedItem, columnId: id }));
       }
     },
   });
-  drag(ref);
 
   drag(drop(ref));
-
   return (
     <ColumnContainer
       ref={ref}
@@ -46,7 +53,7 @@ export const Column = ({ text, id, isPreview }: ColumnProps) => {
     >
       <ColumnTitle>{text}</ColumnTitle>
       {tasks.map((task) => (
-        <Card columnId={id} id={task.id} key={task.id} text={task.text}></Card>
+        <Card id={task.id} columnId={id} text={task.text} key={task.id} />
       ))}
       <AddNewItem
         toggleButtonText="+ Add another task"

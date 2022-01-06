@@ -33,15 +33,17 @@ export const Card = ({ text, id, columnId, isPreview }: CardProps) => {
       if (draggedItem.id === id) {
         return;
       }
+
       dispatch(moveTask(draggedItem.id, id, draggedItem.columnId, columnId));
+      console.log(draggedItem);
     },
   });
 
-  drag(ref);
   drag(drop(ref));
 
   return (
     <CardContainer
+      isPreview={isPreview}
       ref={ref}
       isHidden={isHidden(draggedItem, "CARD", id, isPreview)}
     >
